@@ -78,7 +78,7 @@ namespace AmsulProject
         /// <returns>A webhost builder you can build() and run()</returns>
         public static IWebHostBuilder CreateWebHostBuilder()
         {
-            return WebHost.CreateDefaultBuilder(args).UseStartup<NetworkHost>();
+            return WebHost.CreateDefaultBuilder().UseStartup<NetworkHost>();
         }
 
     }
