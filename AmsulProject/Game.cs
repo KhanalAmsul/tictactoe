@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -10,19 +11,19 @@ namespace AmsulProject
 
         public char whoamI = 'x';
         public bool forever_lonely = true;
-           public Game(bool iAmX, bool localPlay) //constructor
-
+        public Game(bool iAmX, bool localPlay) //constructor
         {
 
-            if(iAmX)
+            if (iAmX)
             {
                 whoamI = 'x';
-            }else
+            }
+            else
             {
                 whoamI = 'o';
             }
 
-            if(localPlay)
+            if (localPlay)
             {
                 forever_lonely = true;
 
@@ -31,12 +32,10 @@ namespace AmsulProject
             {
                 forever_lonely = false;
             }
-                      
+
         }
 
-        
-        
-        public Gamestate my_board = new Gamestate();       
+        public Gamestate my_board = new Gamestate();
 
         public void PrintTheBoard()
         {
@@ -54,9 +53,8 @@ namespace AmsulProject
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
-            
-        }
 
+        }
 
         public bool AcceptPlayerInput()
         {
@@ -103,8 +101,6 @@ namespace AmsulProject
 
         }//acceptPlayerInput end
 
-
-
         public bool checkwinstate(char whoamI)
         {
             bool win_state = false;
@@ -147,7 +143,7 @@ namespace AmsulProject
         public void Run()
         {
             bool gameIsOver = false;
-           
+
             while (!gameIsOver)
             {
                 PrintTheBoard();
@@ -183,19 +179,21 @@ namespace AmsulProject
                     }
                     else
                     {
-
+                        //do network stuff here
                     }
 
+                    Console.WriteLine(""); Console.WriteLine("");
+                    Console.WriteLine("");
+
+                    Console.WriteLine("I am showing you some json that will make your life easier");
+                    string jsonGameState = Newtonsoft.Json.JsonConvert.SerializeObject(my_board, Formatting.Indented);
+                    Console.WriteLine(jsonGameState);
+                    Console.WriteLine(""); Console.WriteLine("");
+                    Console.WriteLine("");
+
                 }
-
-                //itIsXsTurn = !itIsXsTurn;
             }
-
-          
-
             Console.ReadLine();//don't exit now
-
-
         }
 
     }
