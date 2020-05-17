@@ -13,7 +13,8 @@ namespace AmsulProject
     /// </summary>
     public class NetworkManager
     {
-        private NetworkPlayer iAmPlayer;
+        public NetworkPlayer playerConnection { get; internal set; }
+        public GameMode gameMode { get; internal set; }
 
         /// <summary>
         /// Initializes and connects to a server
@@ -24,26 +25,28 @@ namespace AmsulProject
             var option = Int32.Parse(Console.ReadLine());//todo fix this in case the player types 4 or Q or hello, keep prompting for good input
             if (option == 3)
             {
+                gameMode = GameMode.Local;
                 Console.WriteLine("Local play it is.");
                 return;
             }
             else if (option == 1)
             {
+                gameMode = GameMode.Host;
                 Task.Run(NetworkHost.CreateWebHostBuilder().Build().Run);
                 Thread.Sleep(1000);
                 Console.WriteLine("You should point run NGrok (ngrok.io) and point it at the URL this server is listening on (likely localhost:5000) ex:\n\n > ngrok.exe http 5000\n\nEnter your ngrok url:");
             }
             else if (option == 2)
             {
+                gameMode = GameMode.NetworkedPlayer;
                 Console.WriteLine("Enter the URL of the host you'd like to connect to. Localhost won't work!");
             }
-            iAmPlayer = new NetworkPlayer(Console.ReadLine());
+            playerConnection = new NetworkPlayer(Console.ReadLine());
             Console.WriteLine("Connecting. Enter your name: ");
-            iAmPlayer.Connect(Console.ReadLine()).Wait(); //todo error handling - what if the url isn't responding??
+            playerConnection.Connect(Console.ReadLine()).Wait(); //todo error handling - what if the url isn't responding??
 
 
-            Console.WriteLine("Successfully connected! Type to chat.");
-
+            Console.WriteLine("Successfully connected!");
         }
 
         /// <summary>
@@ -54,7 +57,7 @@ namespace AmsulProject
             if (isConnected())
             {
                 Console.Write("Chat >");
-                iAmPlayer.SendMessage(Console.ReadLine());
+                playerConnection.SendMessage(Console.ReadLine());
             }
             
         }
@@ -64,9 +67,16 @@ namespace AmsulProject
         /// </summary>
         /// <returns></returns>
         public bool isConnected() { 
-            return iAmPlayer != null;  
+            return playerConnection != null;  
         }
 
 
+    }
+
+    public enum GameMode
+    {
+        Local,
+        Host,
+        NetworkedPlayer
     }
 }

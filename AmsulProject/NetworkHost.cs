@@ -17,15 +17,7 @@ namespace AmsulProject
     /// </summary>
     public class NetworkHost : Hub
     {
-        string hostedGroupName = "TICTACTOE"+Guid.NewGuid().ToString().Substring(0,5);
         static Dictionary<string,string> connectionIdPlayerName = new Dictionary<string, string>();
-
-        /// <summary>
-        /// Don't call this constructor yourself, it is only for ASP.NET Core to call
-        /// </summary>
-        public NetworkHost()
-        {
-        }
 
         /// <summary>
         /// Attach a human readable name to the connection ID
@@ -48,6 +40,15 @@ namespace AmsulProject
         {
             string formattedChat = "["+DateTime.Now.TimeOfDay+"] " + connectionIdPlayerName[this.Context.ConnectionId] + " says: " + message;
             await this.Clients.Group("ThereIsOnlyOneGroup").SendAsync("ReceiveMessage", formattedChat);
+        }
+
+
+#region SignalR Setup Guts
+        /// <summary>
+        /// Don't call this constructor yourself, it is only for ASP.NET Core to call
+        /// </summary>
+        public NetworkHost()
+        {
         }
 
         /// <summary>
@@ -80,6 +81,6 @@ namespace AmsulProject
         {
             return WebHost.CreateDefaultBuilder().UseStartup<NetworkHost>();
         }
-
+#endregion
     }
 }

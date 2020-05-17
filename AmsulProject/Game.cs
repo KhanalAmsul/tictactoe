@@ -11,7 +11,10 @@ namespace AmsulProject
 
         public char whoamI = 'x';
         public bool forever_lonely = true;
-        public Game(bool iAmX, bool localPlay) //constructor
+        public NetworkPlayer multiplayerConnectionClient;
+        public Gamestate my_board = new Gamestate();
+
+        public Game(bool iAmX, bool localPlay, NetworkPlayer multiplayerConnectionClient) //constructor
         {
 
             if (iAmX)
@@ -32,10 +35,9 @@ namespace AmsulProject
             {
                 forever_lonely = false;
             }
-
+            this.multiplayerConnectionClient = multiplayerConnectionClient;
         }
 
-        public Gamestate my_board = new Gamestate();
 
         public void PrintTheBoard()
         {
@@ -99,7 +101,7 @@ namespace AmsulProject
 
             return good_input;
 
-        }//acceptPlayerInput end
+        }//acceptPlayerInput
 
         public bool checkwinstate(char whoamI)
         {
@@ -137,9 +139,6 @@ namespace AmsulProject
 
         }
 
-
-
-
         public void Run()
         {
             bool gameIsOver = false;
@@ -152,7 +151,6 @@ namespace AmsulProject
                 while (!gotGoodInput)
                 {
                     gotGoodInput = AcceptPlayerInput();
-
                 }
 
                 gameIsOver = checkwinstate(whoamI);
@@ -161,39 +159,33 @@ namespace AmsulProject
                 {
                     PrintTheBoard();
                     Console.WriteLine("The winner is " + whoamI + ".");
-
                 }
-                else
+               
+                if (forever_lonely)
                 {
-
-                    if (forever_lonely)
+                    if (my_board.current_x)
                     {
-                        if (my_board.current_x)
-                        {
-                            whoamI = 'x';
-                        }
-                        else
-                        {
-                            whoamI = 'o';
-                        }
+                        whoamI = 'x';
                     }
                     else
                     {
-                        //do network stuff here
+                        whoamI = 'o';
                     }
-
-                    Console.WriteLine(""); Console.WriteLine("");
-                    Console.WriteLine("");
-
-                    Console.WriteLine("I am showing you some json that will make your life easier");
-                    string jsonGameState = Newtonsoft.Json.JsonConvert.SerializeObject(my_board, Formatting.Indented);
-                    Console.WriteLine(jsonGameState);
-                    Console.WriteLine(""); Console.WriteLine("");
-                    Console.WriteLine("");
-
                 }
-            }
-            Console.ReadLine();//don't exit now
+                else
+                {
+                    //do network stuff here
+                }
+
+                Console.WriteLine("\n\n\n"); 
+                Console.WriteLine("I am showing you some json that will make your life easier");
+                string jsonGameState = Newtonsoft.Json.JsonConvert.SerializeObject(my_board, Formatting.Indented);
+                Console.WriteLine(jsonGameState);
+                Console.WriteLine("\n\n\n");
+
+            }//main game loop
+
+            Console.ReadLine();//don't exit immediately after game ends
         }
 
     }
