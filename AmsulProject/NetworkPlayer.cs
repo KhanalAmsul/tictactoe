@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -47,6 +49,23 @@ namespace AmsulProject
         {
             await connection.InvokeAsync("SendChat", message);
         }
+
+
+        public async Task PerformMove(int row, int col)
+        {
+            await connection.InvokeAsync("ServerMove", row, col);
+
+        }
+        public int LastMoveOtherPlayer_row;
+        public int LastMoveOtherPlayer_col;
+        public async Task ReceiveOtherPlayersMove(int row, int col)
+        {
+            LastMoveOtherPlayer_row = row;
+            LastMoveOtherPlayer_col = col;
+            
+        }
+
+        
 
         /// <summary>
         /// Prints a chat from the server

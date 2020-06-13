@@ -30,6 +30,7 @@ namespace AmsulProject
             this.Groups.AddToGroupAsync(this.Context.ConnectionId, "ThereIsOnlyOneGroup");
         }
 
+        
         /// <summary>
         /// Sends a timestamped, signed (screenname) message to everyone attached to this server.
         /// Called from the NetworkPlayer class on a remote machine
@@ -43,7 +44,17 @@ namespace AmsulProject
         }
 
 
-#region SignalR Setup Guts
+
+
+        public async Task ServerMove(int row, int col)
+        {
+            await this.Clients.Group("ThereIsOnlyOneGroup").SendAsync("ReceiveOtherPlayersMove", row, col);
+        }
+
+        
+
+
+        #region SignalR Setup Guts
         /// <summary>
         /// Don't call this constructor yourself, it is only for ASP.NET Core to call
         /// </summary>

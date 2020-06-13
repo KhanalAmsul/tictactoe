@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -60,7 +61,6 @@ namespace AmsulProject
 
         public bool AcceptPlayerInput()
         {
-
             Console.WriteLine("Type Board Coords Like 11");
             string input = Console.ReadLine();
             bool good_input = false;
@@ -79,6 +79,11 @@ namespace AmsulProject
                         good_input = true;
 
                         my_board.updateBoard(rowPos, colPos);
+                        if (!forever_lonely)
+                        {
+                            multiplayerConnectionClient.PerformMove(rowPos, colPos);
+
+                        }
                     }
                     else
                     {
@@ -102,6 +107,15 @@ namespace AmsulProject
             return good_input;
 
         }//acceptPlayerInput
+
+
+        public void AcceptNetworkInput()
+        {
+            int row_val = multiplayerConnectionClient.LastMoveOtherPlayer_row;
+            int col_val = multiplayerConnectionClient.LastMoveOtherPlayer_col;
+
+            my_board.updateBoard(row_val, col_val);
+        }//acceptNetworkInput
 
         public bool checkwinstate(char whoamI)
         {
@@ -135,6 +149,13 @@ namespace AmsulProject
                 /* Console.WriteLine("The winner is " + checkChar + ".");*/
             }
 
+            if (win_state)
+            {
+                PrintTheBoard();
+                Console.WriteLine("The winner is " + whoamI + ".");
+            }
+        
+
             return win_state;
 
         }
@@ -147,35 +168,47 @@ namespace AmsulProject
             {
                 PrintTheBoard();
                 Console.WriteLine("new screen new turn");
-                bool gotGoodInput = AcceptPlayerInput();
-                while (!gotGoodInput)
-                {
-                    gotGoodInput = AcceptPlayerInput();
-                }
 
-                gameIsOver = checkwinstate(whoamI);
 
-                if (gameIsOver)
+                if ((whoamI == 'x' && my_board.current_x) || (whoamI == 'o' && !my_board.current_x))
                 {
-                    PrintTheBoard();
-                    Console.WriteLine("The winner is " + whoamI + ".");
-                }
-               
-                if (forever_lonely)
-                {
-                    if (my_board.current_x)
+                    bool gotGoodInput = AcceptPlayerInput();
+                    while (!gotGoodInput)
                     {
-                        whoamI = 'x';
+                        gotGoodInput = AcceptPlayerInput();
                     }
-                    else
+                    gameIsOver = checkwinstate(whoamI);
+
+                    if (forever_lonely)
                     {
-                        whoamI = 'o';
+                        gameIsOver = checkwinstate(whoamI);
+
+                        
+
+                        if (my_board.current_x)
+                        {
+                            whoamI = 'x';
+                        }
+                        else
+                        {
+                            whoamI = 'o';
+                        }
                     }
+
                 }
                 else
                 {
-                    //do network stuff here
+                    if (!forever_lonely)
+                    {
+                        AcceptNetworkInput();
+                        
+                        gameIsOver = checkwinstate(whoamI == 'x' ? 'o' : 'x');
+                    }
                 }
+               
+
+                
+                
 
                 Console.WriteLine("\n\n\n"); 
                 Console.WriteLine("I am showing you some json that will make your life easier");
